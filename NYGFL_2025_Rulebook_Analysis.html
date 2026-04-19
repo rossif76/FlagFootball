@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NYGFL 2025 Rulebook Analysis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1a1410; --ink-mid: #3d3530; --ink-light: #6b5f58;
+    --paper: #faf8f4; --paper-warm: #f3efe8; --paper-rule: #e6e0d6;
+    --accent-red: #8b2020; --accent-amber: #7a4f00; --accent-blue: #1a3a5c; --accent-green: #1e4a2e;
+    --rule-red: #c0392b; --rule-amber: #d4860a; --rule-blue: #2563a8; --rule-green: #2d7a45;
+  }
+  body { font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; line-height: 1.7; color: var(--ink); background: var(--paper); max-width: 980px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .masthead { border-top: 3px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 1.5rem 0 1rem; margin-bottom: 2.5rem; }
+  .masthead-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.4rem; }
+  .masthead h1 { font-family: 'Libre Baskerville', serif; font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.5rem; }
+  .masthead-meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-light); display: flex; gap: 2rem; flex-wrap: wrap; }
+  .toc { background: var(--paper-warm); border: 1px solid var(--paper-rule); border-left: 3px solid var(--ink); padding: 1.25rem 1.5rem; margin-bottom: 3rem; }
+  .toc-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.75rem; }
+  .toc ol { list-style: none; counter-reset: toc; padding: 0; }
+  .toc li { counter-increment: toc; display: flex; align-items: baseline; gap: 0.5rem; padding: 0.2rem 0; border-bottom: 1px dotted var(--paper-rule); }
+  .toc li:last-child { border-bottom: none; }
+  .toc li::before { content: counter(toc, upper-roman) "."; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-light); min-width: 24px; }
+  .toc a { font-size: 13px; font-weight: 500; color: var(--ink); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .part-header { margin: 3.5rem 0 1.5rem; }
+  .part-number { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-light); display: block; margin-bottom: 0.25rem; }
+  .part-header h2 { font-family: 'Libre Baskerville', serif; font-size: 1.45rem; font-weight: 700; border-bottom: 2px solid var(--ink); padding-bottom: 0.5rem; }
+  .part-header p { margin-top: 0.75rem; font-size: 13.5px; color: var(--ink-mid); font-style: italic; }
+  .finding { border: 1px solid var(--paper-rule); border-left: 4px solid var(--ink); background: #fff; margin-bottom: 1.1rem; overflow: hidden; }
+  .finding.severity-critical { border-left-color: var(--rule-red); }
+  .finding.severity-major { border-left-color: var(--rule-amber); }
+  .finding.severity-moderate { border-left-color: var(--rule-blue); }
+  .finding.severity-minor { border-left-color: var(--rule-green); }
+  .finding.status-fixed { border-left-color: #888; opacity: 0.75; }
+  .finding-header { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.85rem 1rem; cursor: pointer; user-select: none; }
+  .finding-header:hover { background: var(--paper-warm); }
+  .finding-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-light); min-width: 32px; margin-top: 2px; }
+  .finding-meta { flex: 1; }
+  .finding-title { font-size: 13.5px; font-weight: 600; color: var(--ink); line-height: 1.4; margin-bottom: 0.2rem; }
+  .finding-refs { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-light); }
+  .badge-wrap { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+  .badge { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; white-space: nowrap; }
+  .badge-critical { background: #fde8e8; color: var(--accent-red); border: 1px solid #f5c6c6; }
+  .badge-major { background: #fef3e2; color: var(--accent-amber); border: 1px solid #f9d89e; }
+  .badge-moderate { background: #e8f0fc; color: var(--accent-blue); border: 1px solid #b8ceee; }
+  .badge-minor { background: #e8f5ee; color: var(--accent-green); border: 1px solid #b0d9bc; }
+  .badge-fixed { background: #f0f0f0; color: #666; border: 1px solid #ccc; }
+  .badge-new { background: #fde8e8; color: var(--accent-red); border: 1px solid #f5c6c6; }
+  .badge-persists { background: #fef3e2; color: var(--accent-amber); border: 1px solid #f9d89e; }
+  .finding-body { padding: 0 1rem 1rem; padding-left: calc(32px + 1rem + 0.75rem); font-size: 13px; color: var(--ink-mid); line-height: 1.75; display: none; }
+  .finding-body.open { display: block; }
+  .finding-body p { margin-bottom: 0.6rem; }
+  .finding-body p:last-child { margin-bottom: 0; }
+  .rule-quote { background: var(--paper-warm); border-left: 2px solid var(--paper-rule); padding: 0.5rem 0.75rem; margin: 0.5rem 0; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-mid); line-height: 1.6; }
+  .rule-ref { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-light); display: block; margin-bottom: 0.2rem; }
+  .rule-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.5rem 0; }
+  .rule-compare > div { background: var(--paper-warm); padding: 0.5rem 0.75rem; font-family: 'IBM Plex Mono', monospace; font-size: 11px; line-height: 1.6; color: var(--ink-mid); }
+  .rule-compare > div strong { display: block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.3rem; color: var(--ink-light); font-family: 'IBM Plex Mono', monospace; }
+  .comparison-table-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  table.ct { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.ct thead tr { border-bottom: 2px solid var(--ink); }
+  table.ct th { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); text-align: left; padding: 0.5rem 0.75rem; white-space: nowrap; }
+  table.ct th:first-child { padding-left: 0; }
+  table.ct td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--paper-rule); vertical-align: top; color: var(--ink-mid); line-height: 1.55; }
+  table.ct td:first-child { padding-left: 0; font-weight: 500; color: var(--ink); }
+  table.ct tr:last-child td { border-bottom: none; }
+  table.ct .diff { font-weight: 600; color: var(--accent-red); }
+  table.ct .match { color: var(--accent-green); }
+  .silence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .silence-card { border: 1px solid var(--paper-rule); padding: 0.85rem 1rem; background: #fff; }
+  .silence-card h4 { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.4rem; }
+  .silence-card p { font-size: 12.5px; color: var(--ink-mid); line-height: 1.65; }
+  .silence-card .rule-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent-blue); display: block; margin-top: 0.35rem; }
+  .alert-box { border: 1px solid #f5c6c6; border-left: 4px solid var(--rule-red); background: #fdf5f5; padding: 0.85rem 1rem; margin: 1.5rem 0; font-size: 13px; color: var(--ink-mid); line-height: 1.65; }
+  .alert-box strong { color: var(--accent-red); }
+  .info-box { border: 1px solid #b8ceee; border-left: 4px solid var(--rule-blue); background: #f0f5fd; padding: 0.85rem 1rem; margin: 1.5rem 0; font-size: 13px; color: var(--ink-mid); line-height: 1.65; }
+  .divider { border: none; border-top: 1px solid var(--paper-rule); margin: 2rem 0; }
+  .toggle-all { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent-blue); border: none; background: none; cursor: pointer; padding: 0; margin-bottom: 1rem; text-decoration: underline; }
+  .section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--paper-rule); display: block; }
+  @media (max-width: 640px) { .rule-compare, .silence-grid { grid-template-columns: 1fr; } body { padding: 1.5rem 1rem 4rem; } .masthead h1 { font-size: 1.4rem; } }
+  @media print { .finding-body { display: block !important; } .toggle-all { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="masthead-kicker">Officiating &amp; Rules Analysis — Revised Edition</p>
+  <h1>NYGFL 2025 Full Rulebook Analysis:<br>Internal Review &amp; NGFFL Comparison</h1>
+  <div class="masthead-meta">
+    <span>Source: NYGFL Rule Book (Updated 2025) — nygayfootball.org/wp-content/uploads/2025/04/2025-NYGFL-Rulebook.pdf</span>
+    <span>Compared against: NGFFL Rulebook 2024–2025 (Aug. 9, 2024)</span>
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>Note on document status:</strong> The 2025 NYGFL Full Rulebook retains "March 2018 Page X of 22" in its running page headers throughout, indicating it was not comprehensively reformatted as a 2025 document — it is an in-place revision of the 2018 file. This means some 2018 material was carried forward without full review, and the document's own headers misrepresent its currency. This analysis supersedes the prior analysis which was based on the 2018 version.
+</div>
+
+<div class="toc">
+  <p class="toc-title">Contents</p>
+  <ol>
+    <li><a href="#part1">Internal Inconsistencies &amp; Issues Within the 2025 NYGFL Rulebook</a></li>
+    <li><a href="#part2">Areas Where the NYGFL Is Silent That the NGFFL Addresses</a></li>
+    <li><a href="#part3">Comparison &amp; Contrast: NYGFL vs. NGFFL Definitions, Rules &amp; Adjudications</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════ PART I ═══════════ -->
+<div id="part1" class="part-header">
+  <span class="part-number">Part I</span>
+  <h2>Internal Inconsistencies &amp; Issues Within the 2025 NYGFL Rulebook</h2>
+  <p>All findings reference the 2025 NYGFL Full Rulebook unless stated otherwise. Findings marked "persists from 2018" were identified in the prior version and were not corrected. Findings marked "new in 2025" were introduced by the 2025 revision.</p>
+</div>
+
+<span class="section-label">A. Penalty Adjudication — Loss of Down &amp; Yardage Conflicts</span>
+
+<button class="toggle-all" onclick="toggleAll('p1a')">Expand all</button>
+<div id="p1a">
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">1</span>
+    <div class="finding-meta">
+      <div class="finding-title">Flag guarding carries no loss of down — not in the rule body, not in the summary</div>
+      <div class="finding-refs">2025 NYGFL § 9 (Rule body) · § 9 Summary (j)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rule body states: "No runner shall be allowed to 'flag guard' to prevent being deflagged. Flag Guarding (live ball foul) = 5-yard penalty." The penalty summary confirms: "(j) Flag Guarding 5 yards." No loss of down appears anywhere in the 2025 rulebook for this foul.</p>
+    <div class="rule-compare">
+      <div><strong>NYGFL 2025 (Rule 9 body + summary)</strong>"Flag Guarding (live ball foul) = 5-yard penalty" — no loss of down anywhere.</div>
+      <div><strong>NGFFL § 9.2.7</strong>"Flag Guarding – 5 yards, loss of down" — stated explicitly for every prohibited form: stiff-arm, arm below waist, hurdling, lowering head, diving.</div>
+    </div>
+    <p>Without a loss of down, a runner who flag-guards on 3rd-and-8, gains 12 yards, and draws the 5-yard penalty retains the first down after enforcement. The penalty serves almost no deterrent function on any conversion down. The 2025 update did not address this.</p>
+    <p>Additionally, the 2025 rulebook's definition of flag-guarding (§ 2.3.3) only captures intentional acts: "Flag-guarding is when the runner intentionally slaps or obstructs the free action of an opponent's hand." The NGFFL broadened this in 2024 to cover unintentional obstruction as well, acknowledging that runners often drop their arms accidentally without meaning to obstruct. The NYGFL's intent-based standard creates an argument on every flag-guarding call.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">2</span>
+    <div class="finding-meta">
+      <div class="finding-title">Illegal forward pass: no loss of down in rule text or penalty summary</div>
+      <div class="finding-refs">2025 NYGFL § 7.5.3 · § 9 Summary (f)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook (§ 7.5.3) defines three types of illegal forward pass: (a) from beyond the LOS, (b) after change of possession, (c) after a running play. None of the three includes a loss of down in the penalty language. The penalty summary lists only "(f) Illegal Forward Pass 5 yards."</p>
+    <p>Compare this to Illegal Forward Handing (§ 7.3.2), which explicitly says "Illegal Forward Handing = 5-yard penalty and Loss of down." The loss-of-down language is present for forward handing but absent for the more common illegal forward pass. This appears to be an oversight — the NGFFL prescribes loss of down for every variety of illegal forward pass.</p>
+    <div class="rule-compare">
+      <div><strong>NYGFL 2025 § 7.5.3</strong>Three scenarios listed. No "loss of down" in the penalty for any of them. Summary: "5 yards."</div>
+      <div><strong>NGFFL § 7.5.2(a–e)</strong>"Illegal Forward Pass – 5 yards & loss of down" — stated individually for each: beyond LOS, after change of possession, after run, second forward pass, pass to self.</div>
+    </div>
+    <p>A second forward pass thrown intentionally — a calculated rule violation to extend a drive — draws only a 5-yard penalty and a replay of the same down under NYGFL rules. There is no deterrent for strategic misuse.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">3</span>
+    <div class="finding-meta">
+      <div class="finding-title">Holding the runner: the rule body and penalty summary prescribe different penalties for the same act</div>
+      <div class="finding-refs">2025 NYGFL § 9.1 (body) · § 9 Summary (r)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>This is the most operationally dangerous conflict in the 2025 rulebook. The rule body and the penalty summary say completely different things about the same foul:</p>
+    <div class="rule-compare">
+      <div><strong>NYGFL 2025 § 9.1 (body)</strong>"A defensive player may not intentionally push or black [sic] a runner who is near the sideline. Unsportsmanlike Conduct (live ball foul) = 10-yard penalty"</div>
+      <div><strong>NYGFL 2025 § 9 Summary (r)</strong>"Holding the runner 5 yards (added to end of run)"</div>
+    </div>
+    <p>The rule body labels holding the runner as "Unsportsmanlike Conduct" at 10 yards from the succeeding spot. The summary calls it "Holding the runner" at 5 yards from the end of the run. These are different fouls, different yardages, different enforcement spots, and different procedural consequences. An official enforcing the rule body and an official enforcing the summary will reach entirely different results — especially on plays near the sideline or goal line.</p>
+    <p>The NGFFL is unambiguous: holding the runner is 10 yards from the basic enforcement spot (§ 9.2.4), with no "unsportsmanlike" label. The NYGFL's mislabeling as "unsportsmanlike" also matters procedurally — unsportsmanlike fouls are administered from the succeeding spot, not the spot of the foul, and they cannot create double fouls with live-ball fouls.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">4</span>
+    <div class="finding-meta">
+      <div class="finding-title">Illegal second run: penalty not in summary, loss of down not stated</div>
+      <div class="finding-refs">2025 NYGFL § 7.3.4 · § 9 Summary</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook (§ 7.3.4) describes the consequence of a second scrimmage running play: "All Team A progress beyond the LOS is negated. The ball will be spotted at the previous spot." There is no explicit "loss of down" statement and no entry in the § 9 penalty summary for this foul at all. It is not listed under any name — not "Illegal Procedure," not "Illegal Run," nothing.</p>
+    <p>Officials must navigate the body text of § 7.3.4 while under game pressure, and that text doesn't confirm whether the down is also lost. The NGFFL (§ 7.3.4) is explicit: "Illegal Procedure – 5 yards from previous spot & loss of down." The NYGFL gives neither a rule name, a yardage penalty, nor a clear down-number consequence.</p>
+    <p>This matters enormously. On 4th down with the run used up, the down ends, possession changes. If a team tries a second run on 3rd down and the penalty only rolls back the spot (with no loss of down), they simply snap again from the previous spot — no down consumed, no real consequence. The 2025 update did not address this.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">5</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: the "1-yard run" provision introduces a second run per possession with no clear rules</div>
+      <div class="finding-refs">2025 NYGFL § 7.3.3</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook adds to § 7.3.3: "In each possession, Team A may use one designated 1-yard running play. Example, the referee will ask the captain our QB (when 1 yard or shorter and when team A has a run) if they would like to use their one designated run. This is not available to Team A under two minutes or at the goal line."</p>
+    <p>This provision introduces multiple serious problems:</p>
+    <p><strong>1. Does this create a second run per possession?</strong> The section says Team A "may use one scrimmage running play" AND "may use one designated 1-yard running play." Read literally, a team now has two runs per possession: one regular run and one 1-yard run. This directly contradicts the foundational rule that only one scrimmage run is allowed per possession.</p>
+    <p><strong>2. "The referee will ask the captain our QB"</strong> — the phrase "our QB" is an editorial artifact from what appears to be meeting notes written in first person. It is not intelligible rule language. Who is "our" QB? This sentence makes no grammatical sense as a rule.</p>
+    <p><strong>3. "Under two minutes"</strong> — under two minutes of which half? Both halves? Only the second? And what is the interaction with the onside play rule (§ 8.5), which also restricts actions in the final 4 minutes?</p>
+    <p><strong>4. "At the goal line"</strong> — this is entirely undefined. Does "at the goal line" mean inside the 5-yard line? The 10-yard line? The end zone? Goal-line situations are exactly where a short-yardage run is most valuable, making this restriction significant — but unenforceable without a distance threshold.</p>
+    <p><strong>5. No penalty specified</strong> for misuse or illegal use of the 1-yard run, and no entry in the penalty summary.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">6</span>
+    <div class="finding-meta">
+      <div class="finding-title">Double foul defined as same team fouling — should be each team</div>
+      <div class="finding-refs">2025 NYGFL § 2.12.1(c)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Section § 2.12.1(c) defines a double foul as: "One or more live ball fouls, other than unsportsmanlike, committed by the <em>same team</em> during the same down at such a time that the offended team is permitted a choice of penalties." This is wrong. A double foul — in every standard of football law — means fouls committed by <em>each</em> team during the same down, resulting in the penalties offsetting and the down being replayed.</p>
+    <p>What the NYGFL describes in (c) — multiple fouls by the same team — is the definition of a <em>multiple</em> foul (§ 2.12.1(d)). The rulebook has the definitions of "double foul" and "multiple foul" essentially swapped, or at minimum, defines double foul incorrectly.</p>
+    <div class="rule-compare">
+      <div><strong>NYGFL 2025 § 2.12.1(c) — "Double Foul"</strong>"committed by the same team" — this is incorrect. Double fouls require both teams to foul.</div>
+      <div><strong>NGFFL § 2.14.1(d) — "Double Foul"</strong>"One or more live ball fouls... committed by each team." — Correct definition.</div>
+    </div>
+    <p>Rule 10 (Double and Multiple Fouls) then correctly describes double fouls as when "both teams commit fouls" — creating a further internal contradiction where Rule 2's definition disagrees with Rule 10's enforcement procedure.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">7</span>
+    <div class="finding-meta">
+      <div class="finding-title">Pass interference: spot foul in rule text for all PI; offensive PI listed as 10 yards in summary</div>
+      <div class="finding-refs">2025 NYGFL § 7.5.6 · § 9 Summary (g) &amp; (u)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The rule text (§ 7.5.6) declares: "Pass Interference (spot foul) = Spot of Infraction + Automatic First Down" — one standard covering both teams, with no distinction between offense and defense. The penalty summary contradicts this:</p>
+    <div class="rule-compare">
+      <div><strong>§ 9 Summary (g) — Offensive PI</strong>"Pass interference 10 yards"<br><em>Not a spot foul.</em></div>
+      <div><strong>§ 9 Summary (u) — Defensive PI</strong>"Pass interference — Spot foul; first down"</div>
+    </div>
+    <p>The rule text creates a spot foul for all PI. The summary makes offensive PI a fixed 10 yards and defensive PI a spot foul. On a play where offensive PI occurs 35 yards downfield, the difference between a 10-yard penalty from the previous spot and a spot foul from the point of infraction is enormous. Officials must choose between the text and the summary — the document gives no guidance on which controls.</p>
+    <p>Additionally, the rule text says the restriction for Team B "begins past the 5-yard 'chuck zone'" — but then states "The restriction does not apply if the pass does not cross the line." The NGFFL rule (§ 7.5.7) is the opposite: "The restriction does apply even if the pass does not cross the line of scrimmage." Under the NYGFL rule as written, a screen pass behind the LOS cannot draw a pass interference call from either team — a significant difference from standard play.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">8</span>
+    <div class="finding-meta">
+      <div class="finding-title">Roughing the passer: automatic first down present in rule text but absent from penalty summary</div>
+      <div class="finding-refs">2025 NYGFL § 9.2 (body) · § 9 Summary (aa)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The roughing the passer rule (§ 9.2) correctly states: "Roughing the Passer (live ball foul) = 10-yard penalty and automatic first down." But the penalty summary (aa) lists only: "Roughing the Passer 10 yards." The automatic first down is absent from the quick-reference summary that officials are most likely to consult mid-game. An official working from the summary alone enforces 10 yards without awarding a first down — the wrong outcome.</p>
+    <p>Additionally, the 2025 rule text's description of roughing the passer is incomplete: it only covers defensive contact with the passer's arm. Standard roughing rules also cover contact with the passer's body after the throw, charging into a stationary passer, and post-throw contact in general. The NGFFL (§ 9.3.4) specifies that defenders must "make a definite effort to avoid charging into a passer or contacting a passer's arm and/or hand during or after a legal forward pass" and prohibits contact on a passer "who is standing still or fading back."</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">9</span>
+    <div class="finding-meta">
+      <div class="finding-title">Bull rush: two penalty levels in the summary with no definition or distinction in the rule body</div>
+      <div class="finding-refs">2025 NYGFL § 9 Summary (x) &amp; (y)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The defensive penalty summary lists two separate bull rush entries: "(x) Personal Foul 10 yards (bull rush)" and "(y) Bull Rush 5 yards." There are apparently two tiers of bull rush severity — but "bull rush" is never defined anywhere in the 22 pages of the 2025 rulebook body. The conditions for a 5-yard bull rush versus a 10-yard personal foul bull rush are never described. Officials cannot apply a rule that isn't written.</p>
+    <p>The NGFFL handles the same concept under pass rusher rules (§ 2.3.6): a rusher who charges into a Team A player commits "Personal foul, unnecessary roughness – 10 yards + automatic first down." There is one standard, one yardage, and one clear definition. The NYGFL has no definition and two unexplained yardages.</p>
+  </div>
+</div>
+
+</div>
+
+<span class="section-label">B. Structural &amp; Numbering Errors</span>
+
+<button class="toggle-all" onclick="toggleAll('p1b')">Expand all</button>
+<div id="p1b">
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">10</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: Rule 2 has two different sections both numbered "2.8.1" and "2.8.2"</div>
+      <div class="finding-refs">2025 NYGFL Rule 2 § 7 (Kicks) and § 8 (Advancing the Ball)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-critical">Critical</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook's Rule 2 (Definitions) contains a numbering collision. Section 7 (Kicks) contains rules numbered 2.8.1 and 2.8.2. Section 8 (Advancing the Ball) immediately follows and also contains rules numbered 2.8.1 and 2.8.2 — with entirely different content:</p>
+    <div class="rule-compare">
+      <div><strong>Rule 2 Section 7 § 2.8.1</strong>"Kicking the ball means intentionally striking the ball with the knee, lower leg, or foot. A kick ends when a player gains possession of [sic] when the ball becomes dead."</div>
+      <div><strong>Rule 2 Section 8 § 2.8.1</strong>"The ball may be advanced by a scrimmage running play or a scrimmage passing play."</div>
+    </div>
+    <p>Any citation to "§ 2.8.1" is now ambiguous — it could mean either the kick definition or the advancing-the-ball rule. Section 7 (Kicks) should have been numbered Section 7 with rules at 2.7.x, not 2.8.x. This appears to result from adding the Kicks section without updating the numbering of subsequent sections. The NYGFL renumbered other sections (notably moving former § 2.15 "Spots Used in Administration" to § 2.13) but missed this collision.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">11</span>
+    <div class="finding-meta">
+      <div class="finding-title">Rule 6 and Rule 7 are both titled "Kicking the Ball and Fair Catch"</div>
+      <div class="finding-refs">2025 NYGFL Rule 6 header · Rule 7 header</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Both Rule 6 and Rule 7 carry the identical title "KICKING THE BALL AND FAIR CATCH" in the 2025 full rulebook. Rule 7 contains the snap, handing, and passing rules — it should be titled "SNAPPING, HANDING AND PASSING THE BALL" (matching the NGFFL). When officials or players cite "Rule 7," they get a kicking header but passing content. Any dispute that requires citing a rule number by name will produce immediate confusion.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">12</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: Rule 8 has two consecutive "Section 5" headers — "Onside Try" then "Onside Play"</div>
+      <div class="finding-refs">2025 NYGFL Rule 8 § 5</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Rule 8 contains two consecutive headers both labeled "Section 5." The first reads "Section 5 Onside Try" and is immediately followed by "Section 5 Onside Play" — with the actual onside play content appearing under the second header. The first header appears to be a leftover draft label ("Onside Try") that was renamed to "Onside Play" without removing the first instance. The result is a document with two Section 5s in the same rule, one of which has no content.</p>
+    <p>This also means Rule 8's Tie Games and Overtime section is labeled Section 6 in the 2025 full rulebook, despite following a duplicated Section 5. The section numbering after this point is correct only if the first "Section 5 Onside Try" header is ignored.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">13</span>
+    <div class="finding-meta">
+      <div class="finding-title">Sections 7.1.3 and 7.1.4 remain word-for-word duplicates</div>
+      <div class="finding-refs">2025 NYGFL § 7.1.3 · § 7.1.4</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Rules § 7.1.3 and § 7.1.4 remain substantially identical in the 2025 version — both describe the snapper's right to make preliminary adjustments before the snap. They differ only in minor wording ("their hand(s)" vs. "remove their hand(s)") but describe exactly the same act. One is redundant and should be removed. The NGFFL addresses this in a single rule (§ 7.1.5) with one clear description.</p>
+    <p>Note also that § 7.1.5(d) still contains a typo: "Life or move the ball in any way other than a legal snap" — "Life" should be "Lift." This typo survived the 2025 update.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">14</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: Rule 9.1 and Rule 10 lose all numbered sub-rules — nothing can be precisely cited</div>
+      <div class="finding-refs">2025 NYGFL Rule 9 § 1 · Rule 10 (all sections)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2018 rulebook had numbered sub-rules throughout Rule 9 (9.1.1, 9.1.2, etc.) and Rule 10 (10.1.1, 10.1.2, etc.). The 2025 revision removed all sub-rule numbering from Rule 9 Section 1 and from all of Rule 10. These sections are now formatted as plain paragraphs and bullet points without any numbering.</p>
+    <p>When an official, captain, or protest committee needs to cite a specific rule — for example, "Rule 10, Section 2, item (a)" — they cannot. They can only say "somewhere in Rule 10 Double and Multiple Fouls." This is a significant step backward in precision and undermines the protest/appeal process described in § 9.8, which requires parties to identify specific rule violations in writing.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">15</span>
+    <div class="finding-meta">
+      <div class="finding-title">Timeouts: internal contradiction — § 2.16.1 says 2 per half; § 3.3.2 says 3 per half (4 total)</div>
+      <div class="finding-refs">2025 NYGFL § 2.16.1 · § 3.3.2</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Within the same 2025 document, two sections contradict each other on timeouts:</p>
+    <div class="rule-compare">
+      <div><strong>§ 2.16.1 (Definitions)</strong>"Each team is allowed two charged time-outs per half."</div>
+      <div><strong>§ 3.3.2 (Clock)</strong>"Each team is permitted four timeouts in the game and can use up to three per half. If a team uses no timeouts in the first half, they will have three remaining in the second half."</div>
+    </div>
+    <p>The definitions chapter says 2 per half with no carryover. The game clock section says 4 total / 3 per half with carryover. These are the rules a team will cite to get an extra timeout. The 2025 revision updated § 3.3.2 to match the NGFFL standard but failed to update § 2.16.1. The inconsistency between the two sections of the same document is unresolved.</p>
+  </div>
+</div>
+
+</div>
+
+<span class="section-label">C. Deflagging, Spot of Ball &amp; Dead Ball Inconsistencies</span>
+<button class="toggle-all" onclick="toggleAll('p1c')">Expand all</button>
+<div id="p1c">
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">16</span>
+    <div class="finding-meta">
+      <div class="finding-title">Ball spot after deflagging: two rules still give different answers</div>
+      <div class="finding-refs">2025 NYGFL § 2.13.4 · § 4.4.5</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Partially addressed</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook corrected § 4.4.5 from the confusing 2018 language ("where the runner's hips are") to the cleaner "A ball carrier is down where the ball is when the flags are pulled." However, § 2.13.4 (the definitions chapter) still reads: "A ball carrier is down when they have their flags seized, at the spot where the flag is pulled, not the location of the ball."</p>
+    <div class="rule-compare">
+      <div><strong>§ 2.13.4 (Definitions)</strong>"at the spot where the flag is pulled, not the location of the ball" — the ball is at the flag spot.</div>
+      <div><strong>§ 4.4.5 (Deflagging)</strong>"where the ball is when the flags are pulled" — the ball is at the ball's position, not the flag's.</div>
+    </div>
+    <p>The 2018 three-way conflict has been reduced to a two-way conflict, but it persists. On a runner who has a flag at their back hip while carrying the ball extended forward, the two rules produce different spots. The NGFFL resolves this with one consistent standard: "the spot where the ball was when the runner is touched" (§ 4.4.4).</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">17</span>
+    <div class="finding-meta">
+      <div class="finding-title">Live ball defensive foul during a down: Rule 5 has no governing provision</div>
+      <div class="finding-refs">2025 NYGFL § 5.2.1 · § 5.2.2 · § 5.2.3</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Rule 5 covers three down/possession scenarios: declined penalties (§ 5.2.1), dead ball fouls (§ 5.2.2), and fouls simultaneous with the snap (§ 5.2.3). The most common game situation — a live-ball foul committed by the defense <em>during</em> a scrimmage down — is not addressed by any of them.</p>
+    <p>The NGFFL (§ 5.2.2) covers this explicitly: when a foul occurs during a scrimmage down before any change of possession, the ball belongs to Team A after measurement, and the down number is the same unless the acceptance includes a 1st down, loss of down, or measurement produces a 1st down. This rule was the subject of our prior session's analysis of the 4th-down holding scenario. It remains absent from the 2025 update.</p>
+    <p>The absence means officials have no textual answer to: if holding is called on 2nd-and-7 and the play gained 4 yards, does the offense replay 2nd down (after measurement) or play 3rd down? The NYGFL's general language in § 5.1.1 — "any down may be repeated if provided for by the rules" — is a recital, not a governing standard.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">18</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: Safety section significantly shortened — critical provisions removed</div>
+      <div class="finding-refs">2025 NYGFL Rule 8 § 4</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2018 Safety and Touchback section had multiple numbered provisions covering: (a) runner carrying ball across own goal line, (b) player forcing a loose ball across own goal line, (c) offensive fouls with measurement from the end zone, (d) the rule that a legal forward pass that becomes incomplete from the end zone is NOT a safety. The 2025 version condenses all of this to one paragraph and an exception for the intercepted pass/momentum rule.</p>
+    <p>The most important omission: there is no longer a rule stating that an incomplete legal forward pass thrown from the end zone is not a safety. Under the 2025 text, an official could call a safety any time the offense snaps from their end zone and the play ends there — including an incomplete pass. The 2018 rulebook (§ 8.4.2) explicitly said: "A safety does not occur on a legal forward pass from the end zone that becomes incomplete." This protection is gone in the 2025 version.</p>
+    <p>Also removed: the provision that an offensive foul for which penalty is accepted with measurement from the end zone results in a safety (Rule 10 Special Enforcement still addresses this partially, but the § 8.4 section no longer cross-references it).</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">19</span>
+    <div class="finding-meta">
+      <div class="finding-title">New 2025: Try-For-Point section loses all numbered subsections — becomes a bullet list</div>
+      <div class="finding-refs">2025 NYGFL Rule 8 § 3</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2018 rulebook's Try-For-Point section had seven numbered subsections (8.3.1 through 8.3.4) covering the try value, team decision rights, and foul handling during the try. The 2025 version replaces all of this with unnumbered bullet points under a bare heading "Section 3 Try-For-Point." The rules themselves are mostly intact, but nothing in this section can be specifically cited anymore — an important gap when foul adjudication during a try becomes contested.</p>
+    <p>One notable loss in the restructuring: the 2018 book clearly stated that an interception returned for a touchdown scores 2 points for Team B (§ 8.3.2). The 2025 version says only "Interceptions during a try-for-point attempt are allowed. Team will be awarded two points" — with no mention of which team (the sentence is grammatically ambiguous) and no statement that the ball must be returned to the opponent's end zone.</p>
+  </div>
+</div>
+
+</div>
+
+<span class="section-label">D. Missing Rules, Undefined Penalties &amp; Gaps</span>
+<button class="toggle-all" onclick="toggleAll('p1d')">Expand all</button>
+<div id="p1d">
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">20</span>
+    <div class="finding-meta">
+      <div class="finding-title">Illegal Shift missing from penalty summary; Illegal Formation also unlisted</div>
+      <div class="finding-refs">2025 NYGFL § 7.2.2 · § 7.2.4 · § 9 Summary</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The rule body prescribes these penalties: "Illegal Formation (live ball foul) = 5-yard penalty" (§ 7.2.2) and "Illegal Shift (live ball foul) = 5-yard penalty" (§ 7.2.4). Neither "Illegal Formation" nor "Illegal Shift" appears in the § 9 penalty summary. The summary lists "Illegal Motion 5 yards" but this is a distinct foul (§ 7.2.3). A motion, a shift, and a formation are three separate infractions — only the first is in the summary. Officials working from the summary lack authority for two of the three pre-snap formation fouls.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">21</span>
+    <div class="finding-meta">
+      <div class="finding-title">Clipping and blocking below the waist: defined terms with no prescribed penalties</div>
+      <div class="finding-refs">2025 NYGFL § 2.3.1 (implied) · § 9 Summary</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2025 rulebook (§ 2.3.1) describes legal blocking requirements, implying that violations exist. "Clipping" and "blocking below the waist" are referenced in the blocking rule but neither is listed as a foul in Rule 9 nor appears in the penalty summary. The NGFFL penalizes both at 10 yards (§§ 9.2.9–9.2.10). Under NYGFL rules, an official who witnesses a textbook clip has a definition to point to but no penalty to enforce.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">22</span>
+    <div class="finding-meta">
+      <div class="finding-title">"Illegal Block" and "Excessive Force Block" in the summary — defined nowhere in the rulebook body</div>
+      <div class="finding-refs">2025 NYGFL § 9 Summary (o) &amp; (p)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The offensive penalty summary lists "(o) Illegal Block 5 yards (spot foul)" and "(p) Excessive Force Block 10 yards." Neither "Illegal Block" nor "Excessive Force Block" is defined anywhere in the 22-page 2025 rulebook. No rule describes what act constitutes each, when they occur, or what distinguishes a 5-yard from a 10-yard blocking foul. Officials calling these penalties have nothing in the rulebook to justify or explain the call.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">23</span>
+    <div class="finding-meta">
+      <div class="finding-title">Three different terms for the same five-yard defensive zone — "rush line," "expanded neutral zone," and "chuck zone"</div>
+      <div class="finding-refs">2025 NYGFL § 2.6.2 · § 6.1.5 · § 7.5.6</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-major">Major</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The five-yard zone extending beyond the LOS on the defensive side is called three different names in the 2025 rulebook: "rush line" (§ 2.6.2), "expanded neutral zone" (§ 6.1.5), and "chuck zone" (§ 7.5.6). The NGFFL uses "expanded neutral zone" consistently throughout. "Chuck zone" is informal slang that appears only once, in a pass interference provision, without any prior definition. Whether the rush line, the expanded neutral zone, and the chuck zone are exactly the same thing is never established in the rulebook.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">24</span>
+    <div class="finding-meta">
+      <div class="finding-title">Uniform violation in the penalty summary has no corresponding rule in the body</div>
+      <div class="finding-refs">2025 NYGFL § 9 Summary (q) &amp; (cc)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Both the offensive and defensive penalty summaries list "Uniform Violation 5 yards." No rule in the 2025 rulebook body defines what a uniform violation is, when it is called, or what the enforcement procedure is (live ball or dead ball, previous spot or spot of foul). The NGFFL handles equipment violations not through a yardage penalty but through a player-disqualification procedure: the player must leave for at least one down, or the team must use a timeout to keep them in (§ 1.4.9).</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">25</span>
+    <div class="finding-meta">
+      <div class="finding-title">Touchback starting position never stated in the rulebook</div>
+      <div class="finding-refs">2025 NYGFL § 6.1.6 · § 3.2.2</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>Section § 6.1.6 declares: "When any punt goes out-of-bounds in the end zone or becomes dead in the end zone, it is a touchback." It does not say where the ball is placed after the touchback. The NGFFL (§ 8.4.4) is explicit: the ball is put in play at the team's 15-yard line after a touchback. The NYGFL's only starting-position rule (§ 3.2.2) says "The team that begins on offense will start at their 10-yard line" — which governs the start of each half, not touchbacks. Officials must improvise the touchback spot, and teams will disagree.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">26</span>
+    <div class="finding-meta">
+      <div class="finding-title">Penalty definition stripped of the "loss of down" reference — creates systemic ambiguity</div>
+      <div class="finding-refs">2025 NYGFL § 2.12.1</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The 2018 rulebook's penalty definition (§ 2.14.1) included this language: "A penalty is a yardage loss that may be imposed by a rule against a team that has committed the foul; it may include a loss of down, but usually includes replaying the down." This sentence established that loss of down is a recognized component of penalties and that most penalties replay the down.</p>
+    <p>The 2025 version's § 2.12.1 simply says: "A foul is a rule infraction for which a penalty is prescribed." The penalty definition sentence was removed entirely. The rulebook no longer contains any baseline statement of what a penalty includes or when loss of down applies. This compounds every other finding about missing loss-of-down language — now there isn't even a general principle to fall back on.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">27</span>
+    <div class="finding-meta">
+      <div class="finding-title">Stripping: "No player" rule applies to all, but penalty summary lists it as defensive only</div>
+      <div class="finding-refs">2025 NYGFL § 9.1 (body) · § 9 Summary (w)</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-persists">Persists from 2018</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The rule body states: "No player may intentionally strip the ball from the runner." "No player" means any player. But the penalty summary lists stripping only as a defensive penalty: "(w) Stripping the ball 5 yards (spot foul)." If an offensive player strips an interception from a defender, the rule body prohibits it but the summary provides no offensive penalty to call. The correct approach is either a bilateral rule in the summary or a clear statement of who the foul applies to.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">28</span>
+    <div class="finding-meta">
+      <div class="finding-title">Overtime procedure contains an incomplete sentence: "The possessions snake structure"</div>
+      <div class="finding-refs">2025 NYGFL Rule 8 § 6</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span><span class="badge badge-new">New in 2025</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The overtime section states: "The possessions snake structure." This is not a complete sentence. It appears to reference a "snake draft" style alternating possession model — but the word "structure" leaves the sentence dangling with no predicate. The following text explains the alternating series structure, but "snake" is never defined or explained. This may be a note left in the document from a drafting session. It should either be a complete rule sentence or removed entirely.</p>
+    <p>Additionally, the overtime section states: "Intercepted passes end the possession, play is whistled dead." This is a rule unique to NYGFL overtime not found in the NGFFL — but it introduces complications: does the intercepting team still have their guaranteed possession? Does the interception end the half/overtime period? These downstream consequences are unaddressed.</p>
+  </div>
+</div>
+
+</div>
+
+<span class="section-label">E. Grammar, Wording &amp; Typographical Errors in Operative Language</span>
+<button class="toggle-all" onclick="toggleAll('p1e')">Expand all</button>
+<div id="p1e">
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">29</span>
+    <div class="finding-meta">
+      <div class="finding-title">Multiple operative-text errors in the 2025 version — several are new</div>
+      <div class="finding-refs">Multiple sections</div>
+    </div>
+    <div class="badge-wrap"><span class="badge badge-moderate">Moderate</span></div>
+  </div>
+  <div class="finding-body">
+    <p>The following errors appear in operative rule language — not descriptive text — in the 2025 rulebook. Some carry over from 2018; others are new.</p>
+    <p><strong>§ 9.1 — "shall not no use" [persists]:</strong> "An offensive player shall not no use a blocking technique." Double negative. Should be "shall not use."</p>
+    <p><strong>§ 9.1 — "black a runner" [NEW in 2025]:</strong> "A defensive player may not intentionally push or black a runner who is near the sideline." Should be "block." This is a new error not in the 2018 version, which correctly said "block."</p>
+    <p><strong>§ 9.2 — "passers arm" and "plater" [NEW in 2025]:</strong> "make a definite effort to avoid contact with the passers arm" — missing possessive apostrophe. "A defensive plater may not forcibly contact" — "plater" should be "player." Both are new errors in the 2025 roughing-the-passer provision.</p>
+    <p><strong>§ 7.3.3 — "the referee will ask the captain our QB" [NEW in 2025]:</strong> The phrase "our QB" is a first-person possessive that has no place in a rulebook — it reads as a note from a meeting or discussion that was never edited out. Should be rewritten as an objective instruction to officials.</p>
+    <p><strong>§ 3.1.6 — "haves" [persists]:</strong> "There may be up to a 5-minute intermission between the haves when time allows." Should be "halves."</p>
+    <p><strong>§ 7.1.5(d) — "Life or move" [persists]:</strong> "Life or move the ball in any way other than a legal snap." Should be "Lift."</p>
+    <p><strong>§ 7.5.6 — "pass the 5-yard" [persists]:</strong> "for Team B the restriction begins pass the 5-yard 'chuck zone'." Should be "past."</p>
+    <p><strong>§ 2.6.1 — "the receive was in the air" [persists]:</strong> "after the ball is caught while the receive was in the air." Should be "receiver."</p>
+    <p><strong>§ 2.8.1 (Kicks section) — "gains possession of when" [persists]:</strong> "A kick ends when a player gains possession of when the ball becomes dead." Should be "or" not "of when."</p>
+    <p><strong>§ 7.5.6 — "interferes" misspelled [persists]:</strong> "intereferes with an opponent's opportunity" — should be "interferes."</p>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════ PART II ═══════════ -->
+<div id="part2" class="part-header">
+  <span class="part-number">Part II</span>
+  <h2>Areas Where the NYGFL Is Silent That the NGFFL Addresses</h2>
+  <p>Situations with no NYGFL rule at all — not ambiguous language, but complete absence — that the NGFFL covers explicitly. These create exploitable gaps or impossible-to-adjudicate scenarios.</p>
+</div>
+
+<button class="toggle-all" onclick="toggleAll('part2-grid')">Expand all</button>
+<div id="part2-grid">
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">A</span>
+    <div class="finding-meta">
+      <div class="finding-title">Diving to gain yardage: not a foul under NYGFL rules</div>
+      <div class="finding-refs">NGFFL § 2.10.5 · § 9.2.7(d)</div>
+    </div>
+    <span class="badge badge-critical">Critical gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL explicitly defines diving (§ 2.10.5) and penalizes forward dives as flag guarding with loss of down (§ 9.2.7(d)). The NYGFL 2025 rulebook has no definition of diving and prescribes no penalty for it. A runner who dives forward at the goal line on a conversion attempt — leaving their feet to prevent deflagging while gaining yardage — commits no foul under NYGFL rules. This gap is especially significant at the goal line and on short-yardage conversion plays.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">B</span>
+    <div class="finding-meta">
+      <div class="finding-title">Assisting the runner: pushing or pulling a runner is not prohibited</div>
+      <div class="finding-refs">NGFFL § 9.1.1</div>
+    </div>
+    <span class="badge badge-critical">Critical gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 9.1.1) states: "An offensive player shall not push, pull, or lift the runner. Assisting the Runner – 5 yards." The NYGFL 2025 rulebook has no equivalent rule. An offensive player physically shoving the ball carrier forward — or two offensive players pulling a runner across the goal line — violates no NYGFL rule. This is especially exploitable on short-yardage goal-line situations.</p>
+  </div>
+</div>
+
+<div class="finding severity-critical">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">C</span>
+    <div class="finding-meta">
+      <div class="finding-title">Extending periods with untimed downs after a last-play foul: no rule governs this</div>
+      <div class="finding-refs">NGFFL § 3.2.5 · § 3.2.6</div>
+    </div>
+    <span class="badge badge-critical">Critical gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§§ 3.2.5–3.2.6) has clear rules for when a half must — or must not — be extended by an untimed down following an accepted penalty on the last play. For example, a foul by Team B on the last play of a half generally triggers an untimed down; a loss-of-down foul does not. The NYGFL has no equivalent provision. When a foul occurs on the last play of a half — one of the most contested and consequential situations in football — officials have no textual guidance on whether to run another play or close the half.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">D</span>
+    <div class="finding-meta">
+      <div class="finding-title">10-second runoff: no rule prevents clock manipulation via intentional penalties</div>
+      <div class="finding-refs">NGFFL § 10.7</div>
+    </div>
+    <span class="badge badge-major">Major gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 10.7) applies a mandatory 10-second clock deduction for applicable fouls after the two-minute warning, preventing teams from intentionally drawing penalties to stop the clock when they have no timeouts. The NYGFL has no such mechanism. The general "unfair acts" provision (§ 9.7) gives officials discretion to penalize clearly unfair play, but provides no specific standard for what constitutes illegal clock management and what the remedy is.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">E</span>
+    <div class="finding-meta">
+      <div class="finding-title">Clock restart rules: the NYGFL says when the clock stops but never says when it restarts</div>
+      <div class="finding-refs">NGFFL § 3.3.5–3.3.9</div>
+    </div>
+    <span class="badge badge-major">Major gap</span>
+  </div>
+  <div class="finding-body">
+    <p>Section § 3.3.5 of the 2025 NYGFL rulebook specifies that the clock starts on the snap after a timeout, incomplete pass, out-of-bounds deflagging, two-minute warning, touchdowns, and changes of possession (all in the two-minute period). Section § 3.3.4 says the clock starts on the ready-for-play signal after an official timeout or penalty conference. But there is no rule for first downs, scoring plays that don't result in change of possession, or plays that end in bounds during the two-minute period. The NGFFL has a comprehensive nine-rule matrix (§§ 3.3.5–3.3.9) covering every scenario. The NYGFL's partial list forces officials to improvise on any unlisted scenario.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">F</span>
+    <div class="finding-meta">
+      <div class="finding-title">Does a run "count" when a penalty is accepted and the spot is at or behind the LOS?</div>
+      <div class="finding-refs">NGFFL § 2.10.3</div>
+    </div>
+    <span class="badge badge-major">Major gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 2.10.3) resolves this specifically: if the enforcement spot is at or behind the LOS, the scrimmage running play is not considered used; if beyond the LOS, it is. The NYGFL has no equivalent. If a runner takes off on the team's one allowed run, gets flagged for a dead-ball-equivalent foul, and the ball is returned to the previous spot — the team cannot tell from the rulebook whether their one allowed run has been consumed. This affects every possession where a running play draw a penalty that returns the ball near or behind the LOS.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">G</span>
+    <div class="finding-meta">
+      <div class="finding-title">Safety on the try-for-point: no point value assigned</div>
+      <div class="finding-refs">NGFFL § 8.1.1(d) · § 8.3.4</div>
+    </div>
+    <span class="badge badge-major">Major gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL awards 1 point to the defense for a safety scored during a try-for-point (§ 8.1.1(d)). The NYGFL's try-for-point section describes interception returns (2 points) and various foul scenarios, but never addresses what happens if a safety is forced during the try. Officials have no rule to apply if this rare but valid situation occurs.</p>
+  </div>
+</div>
+
+<div class="finding severity-major">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">H</span>
+    <div class="finding-meta">
+      <div class="finding-title">Two-on-one blocking beyond the expanded neutral zone: no restriction exists</div>
+      <div class="finding-refs">NGFFL § 9.2.13</div>
+    </div>
+    <span class="badge badge-major">Major gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 9.2.13) limits two-on-one blocking to the expanded neutral zone and behind it, with a 10-yard penalty beyond. The NYGFL has no equivalent restriction. In a 7-on-7 flag football league with active downfield blocking, two offensive players can legally trap a single defender anywhere on the field without penalty under NYGFL rules. This creates significant structural imbalance on designed running plays.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">I</span>
+    <div class="finding-meta">
+      <div class="finding-title">Forward fumble into the opponent's end zone: not addressed</div>
+      <div class="finding-refs">NGFFL § 7.4.4</div>
+    </div>
+    <span class="badge badge-moderate">Moderate gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 7.4.4) specifically states that "a forward fumble from the field of play into an opponent's end zone is returned to the spot where the runner lost possession" — preventing a team from fumbling the ball into the end zone and claiming a touchdown. The NYGFL (§ 7.4.2) states that a ball fumbled forward becomes dead where the runner loses possession, but does not address the scenario where that spot is across the opponent's goal line. An official could rule it a touchdown (§ 8.2.1(b): "a loose ball caught by a player in-bounds while the ball is on or behind the opponent's goal line") or apply the fumble rule — the text is silent on the conflict.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">J</span>
+    <div class="finding-meta">
+      <div class="finding-title">Illegal substitution carries no penalty despite a rule against it</div>
+      <div class="finding-refs">NGFFL § 9.5</div>
+    </div>
+    <span class="badge badge-moderate">Moderate gap</span>
+  </div>
+  <div class="finding-body">
+    <p>Section § 3.5.1 prohibits substitutes from entering during a down, but prescribes no penalty. The NGFFL has a dedicated illegal substitution rule (Rule 9 § 5) with a 5-yard penalty. Under NYGFL rules, an official who sees a player illegally enter during a live play has a rule to cite but no enforcement mechanism. This falls to the general unfair acts provision (§ 9.7), which provides only discretionary remedies.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">K</span>
+    <div class="finding-meta">
+      <div class="finding-title">Illegal pass-play contact applies only when a pass is thrown — not during drop-backs</div>
+      <div class="finding-refs">NGFFL § 7.5.10</div>
+    </div>
+    <span class="badge badge-moderate">Moderate gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§ 7.5.10) extends illegal pass-play contact restrictions to the QB's drop-back phase even if no pass is ultimately thrown: "During a down in which a forward pass is not thrown and while the quarterback is dropped back and attempting to find an open receiver, no B player beyond the expanded neutral zone may contact an opponent." The restriction ends when the QB hands off or scrambles.</p>
+    <p>The NYGFL (§ 7.5.9) applies illegal pass-play contact only to "any player who is beyond the neutral zone intentionally obstructs an opponent's opportunity to move freely." This applies during any down, not just passing plays. But the NYGFL rule doesn't specifically address the drop-back scenario — it doesn't protect receivers who are running routes on what becomes a running play, because there's no specific restriction tied to the QB's position or intent.</p>
+  </div>
+</div>
+
+<div class="finding severity-moderate">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">L</span>
+    <div class="finding-meta">
+      <div class="finding-title">Communication devices (earpieces, coaching phones) not regulated</div>
+      <div class="finding-refs">NGFFL § 1.5.1 · § 1.5.2</div>
+    </div>
+    <span class="badge badge-moderate">Moderate gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§§ 1.5.1–1.5.2) explicitly prohibits communication devices including "cellular phones, headsets, earbuds, headphones, microphones, drones" for coaching or playing purposes during games. The NYGFL 2025 rulebook contains no equivalent provision. A quarterback wearing an earpiece to receive signals from a coach, or a coach using a phone to relay plays, violates no NYGFL rule as written.</p>
+  </div>
+</div>
+
+<div class="finding severity-minor">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">M</span>
+    <div class="finding-meta">
+      <div class="finding-title">Fair catch signal never defined — only the result is stated</div>
+      <div class="finding-refs">NGFFL § 2.9.8</div>
+    </div>
+    <span class="badge badge-minor">Minor gap</span>
+  </div>
+  <div class="finding-body">
+    <p>Section § 4.2.1(j) says the ball becomes dead following "a valid or invalid fair catch signal that is given by the receiver." The § 9 penalty summary includes no fair catch interference entry. The 2025 rulebook never defines what a fair catch signal looks like — no description of a raised hand, waving motion, or any required gesture. Without a definition, officials cannot distinguish a valid signal from an accidental arm raise, and teams can dispute any fair-catch call.</p>
+  </div>
+</div>
+
+<div class="finding severity-minor">
+  <div class="finding-header" onclick="toggle(this)">
+    <span class="finding-num">N</span>
+    <div class="finding-meta">
+      <div class="finding-title">No explicit hate speech or harassment policy in the rulebook</div>
+      <div class="finding-refs">NGFFL § 9.4.4 · § 9.4.5</div>
+    </div>
+    <span class="badge badge-minor">Notable gap</span>
+  </div>
+  <div class="finding-body">
+    <p>The NGFFL (§§ 9.4.4–9.4.5) explicitly defines hate speech and requires immediate ejection when officials witness it — a provision particularly important for a league serving LGBTQIA+ communities. The NYGFL's general unsportsmanlike conduct rule covers "baiting acts, words, or insignia worn which engenders ill will" and "abusive or insulting language or gestures," which would encompass most hate speech. However, there is no explicit definition, no clear ejection mandate, and no escalation path written into the rulebook. Given the NYGFL's community purpose, an explicit provision would strengthen both protection and enforcement consistency.</p>
+  </div>
+</div>
+
+</div>
+
+<!-- ═══════════ PART III ═══════════ -->
+<div id="part3" class="part-header">
+  <span class="part-number">Part III</span>
+  <h2>Comparison &amp; Contrast: NYGFL vs. NGFFL</h2>
+  <p>Direct comparison of definitions, rules, and adjudications. Items marked "consistent" are substantially the same across both books. All NYGFL references are to the 2025 full rulebook.</p>
+</div>
+
+<span class="section-label">A. Game Structure &amp; Timing</span>
+<div class="comparison-table-wrap">
+<table class="ct">
+  <thead><tr><th>Topic</th><th>NYGFL 2025</th><th>NGFFL 2024–25</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr><td>Half duration</td><td>22 minutes</td><td>25 minutes</td><td class="diff">Different — 3 min shorter</td></tr>
+    <tr><td>Play clock</td><td>25 seconds</td><td>30 seconds</td><td class="diff">Different</td></tr>
+    <tr><td>Timeout duration</td><td>30 seconds</td><td>60 seconds</td><td class="diff">Different — NGFFL double</td></tr>
+    <tr><td>Timeouts per game / half</td><td>4 total / 3 per half (§ 3.3.2) — but § 2.16.1 says 2 per half</td><td>4 total / 3 per half</td><td class="diff">NYGFL internal conflict; NGFFL is unambiguous</td></tr>
+    <tr><td>Halftime intermission</td><td>Up to 5 minutes</td><td>10 minutes</td><td class="diff">Different</td></tr>
+    <tr><td>Field (field of play)</td><td>60 yds × 30 yds</td><td>80 yds × 35 yds</td><td class="diff">Significantly different</td></tr>
+    <tr><td>End zone depth</td><td>10 yards</td><td>10 yards</td><td class="match">Consistent</td></tr>
+    <tr><td>Start of half clock trigger</td><td>On first snap</td><td>On kickoff</td><td class="diff">Different (NGFFL has kickoffs)</td></tr>
+    <tr><td>Possession after score</td><td>Own 10-yard line</td><td>Own 15-yard line</td><td class="diff">Different</td></tr>
+    <tr><td>Mercy rule thresholds</td><td>25+ pts at 5 min; 17+ pts at 2 min</td><td>36+ pts at 5 min; 25+ pts at 2 min</td><td class="diff">Different — NGFFL higher thresholds</td></tr>
+    <tr><td>Overtime ball placement</td><td>Opponent's 10-yard line</td><td>Opponent's 20-yard line</td><td class="diff">Different</td></tr>
+    <tr><td>Forfeit score</td><td>21–0</td><td>Not specified</td><td class="diff">NYGFL specific; NGFFL silent</td></tr>
+    <tr><td>Scoring values (TD, safety, try)</td><td>TD 6, safety 2, try 1 or 2</td><td>TD 6, safety 2, try 1 or 2; safety on try = 1 pt</td><td class="diff">NGFFL adds safety-on-try value</td></tr>
+  </tbody>
+</table>
+</div>
+
+<span class="section-label">B. Penalty Adjudications — Where the Books Differ</span>
+<div class="comparison-table-wrap">
+<table class="ct">
+  <thead><tr><th>Foul</th><th>NYGFL 2025</th><th>NGFFL 2024–25</th><th>Key Difference</th></tr></thead>
+  <tbody>
+    <tr><td>Flag guarding</td><td>5 yards only</td><td>5 yards + loss of down (all forms)</td><td class="diff">NYGFL omits loss of down</td></tr>
+    <tr><td>Illegal forward pass</td><td>5 yards (summary); no loss of down stated</td><td>5 yards + loss of down for each variety</td><td class="diff">NYGFL omits loss of down</td></tr>
+    <tr><td>Illegal second run</td><td>Ball to previous spot; no loss of down stated; not in summary</td><td>5 yards from previous spot + loss of down</td><td class="diff">NYGFL lacks explicit LoD; not in summary</td></tr>
+    <tr><td>Holding the runner</td><td>10 yds (unsportsmanlike) in body; 5 yds from end of run in summary</td><td>10 yards from basic enforcement spot</td><td class="diff">NYGFL contradicts itself; body mislabels foul</td></tr>
+    <tr><td>Defensive pass interference</td><td>Spot foul + automatic first down</td><td>10 yards + automatic first down (not spot foul)</td><td class="diff">Spot foul vs. fixed 10 yards</td></tr>
+    <tr><td>Offensive pass interference</td><td>Spot foul (text) vs. 10 yds (summary) — contradictory</td><td>10 yards (not a spot foul)</td><td class="diff">NYGFL has internal conflict; NGFFL is clear</td></tr>
+    <tr><td>PI when pass doesn't cross LOS</td><td>No restriction — "does not apply if the pass does not cross the line" (§ 7.5.6)</td><td>Restriction applies regardless — "even if the pass does not cross the line" (§ 7.5.7)</td><td class="diff">Opposite rules — NYGFL removes PI on screen passes</td></tr>
+    <tr><td>Illegal deflagging (pre-catch)</td><td>5 yards</td><td>10 yards</td><td class="diff">NGFFL is doubled; also has exception for post-touch deflags</td></tr>
+    <tr><td>Roughing the passer</td><td>10 yds + auto 1st down (text); 10 yds only (summary)</td><td>10 yards + automatic first down</td><td class="diff">NYGFL summary omits auto first down</td></tr>
+    <tr><td>Clipping</td><td>Implied; no prescribed penalty</td><td>10 yards</td><td class="diff">NYGFL has no penalty</td></tr>
+    <tr><td>Blocking below the waist</td><td>Implied; no prescribed penalty</td><td>10 yards</td><td class="diff">NYGFL has no penalty</td></tr>
+    <tr><td>Assisting the runner</td><td>Not mentioned</td><td>5 yards</td><td class="diff">NYGFL has no rule</td></tr>
+    <tr><td>Two-on-one blocking beyond LOS</td><td>Not mentioned</td><td>10 yards</td><td class="diff">NYGFL has no rule</td></tr>
+    <tr><td>Diving forward</td><td>Not mentioned</td><td>5 yards + loss of down (flag guarding)</td><td class="diff">NYGFL has no rule</td></tr>
+    <tr><td>Bull rush — minor</td><td>5 yards (undefined in body)</td><td>No two-tier system; all charging fouls are 10 yds + auto 1st</td><td class="diff">NYGFL has undefined two-tier system</td></tr>
+    <tr><td>Flagrant personal foul</td><td>Mandatory disqualification (current + next game)</td><td>10 yards + disqualification (current + next game) + possible further sanction via conduct committee</td><td class="diff">NGFFL adds yardage + escalation pathway</td></tr>
+    <tr><td>Running into the kicker</td><td>No distinction from roughing</td><td>Separate foul at 10 yards + auto first down</td><td class="diff">NYGFL has no "running into kicker" foul</td></tr>
+    <tr><td>Tripping</td><td>10 yards</td><td>10 yards</td><td class="match">Consistent</td></tr>
+    <tr><td>Illegal forward handing</td><td>5 yards + loss of down</td><td>5 yards + loss of down</td><td class="match">Consistent</td></tr>
+    <tr><td>Delay of game</td><td>5 yards (dead ball)</td><td>5 yards (dead ball)</td><td class="match">Consistent</td></tr>
+    <tr><td>False start</td><td>5 yards (dead ball)</td><td>5 yards (dead ball)</td><td class="match">Consistent</td></tr>
+    <tr><td>Encroachment / offsides</td><td>5 yards</td><td>5 yards</td><td class="match">Consistent</td></tr>
+    <tr><td>Illegal motion</td><td>5 yards (live ball)</td><td>5 yards (live ball)</td><td class="match">Consistent</td></tr>
+    <tr><td>Intentional grounding</td><td>Allowed</td><td>Allowed</td><td class="match">Consistent</td></tr>
+  </tbody>
+</table>
+</div>
+
+<span class="section-label">C. Key Definitional Differences</span>
+<div class="comparison-table-wrap">
+<table class="ct">
+  <thead><tr><th>Term / Concept</th><th>NYGFL 2025</th><th>NGFFL 2024–25</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Double foul</td>
+      <td>"committed by the same team" (§ 2.12.1(c)) — <strong class="diff">incorrect definition</strong></td>
+      <td>"committed by each team" (§ 2.14.1(d)) — correct definition</td>
+    </tr>
+    <tr>
+      <td>Flag guarding</td>
+      <td>"intentionally slaps or obstructs" (§ 2.3.3) — intent required</td>
+      <td>"uses their hand or arm — either intentionally or unintentionally — to obstruct" (§ 2.3.8) — intent not required</td>
+    </tr>
+    <tr>
+      <td>Dead ball spot after deflagging</td>
+      <td>"where the flag is pulled" (§ 2.13.4) vs. "where the ball is when flags are pulled" (§ 4.4.5) — two standards in conflict</td>
+      <td>"where the ball was when the runner is touched" (§ 4.4.4) — one consistent standard</td>
+    </tr>
+    <tr>
+      <td>Pass rusher eligibility</td>
+      <td>"must start completely behind the rush indicator to cross[ing] the LOS" (§ 2.1.4) — vague, grammatically broken</td>
+      <td>"entire body on B's side of the football and outside the expanded neutral zone" (§ 2.3.7) — precise standard</td>
+    </tr>
+    <tr>
+      <td>Forward pass direction</td>
+      <td>"initial direction determines whether a pass is forward or backward" (§ 2.11.1) — based on release direction</td>
+      <td>"forward if the ball first strikes the ground, a player... nearer the opponent's end line than the point at which the ball leaves the passer's hand" (§ 2.13.4) — based on where ball first contacts</td>
+    </tr>
+    <tr>
+      <td>Scrimmage running play</td>
+      <td>"where the runner crosses the LOS" (§ 7.3.3) — minimal definition</td>
+      <td>"advancing the ball across the line of scrimmage via a runner. It includes handing the ball and any backward pass thrown behind the LOS" (§ 2.10.2) — explicit definition used throughout for enforcement</td>
+    </tr>
+    <tr>
+      <td>Diving</td>
+      <td>Not defined</td>
+      <td>"leaning upper body forward while leaving both feet" (§ 2.10.5)</td>
+    </tr>
+    <tr>
+      <td>Spinning</td>
+      <td>Noted as permitted (Rule 9.1 note)</td>
+      <td>Defined and permitted (§ 2.10.6)</td>
+    </tr>
+    <tr>
+      <td>Foul types</td>
+      <td>6 types including "Simultaneous with Snap (live)" — note the "(live)" designation in parentheses not explained</td>
+      <td>8 types including "Team Unsportsmanlike" and "Post-scrimmage Kick" fouls — two categories NYGFL lacks</td>
+    </tr>
+    <tr>
+      <td>Loose ball</td>
+      <td>"a pass, kick, or otherwise not in player possession" (§ 2.2.2) — does not include fumbles</td>
+      <td>"a pass or fumble or a kick or otherwise not in player possession" (§ 2.2.2) — includes fumbles</td>
+    </tr>
+    <tr>
+      <td>Illegal forward pass (defined trigger)</td>
+      <td>"When the quarterback's entire body is over the LOS" (§ 7.5.1(b))</td>
+      <td>"From a point beyond B's side of the neutral zone" (§ 7.5.1(b)) — cleaner standard based on ball position</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<span class="section-label">D. Rules That Exist in the NGFFL But Have No NYGFL Equivalent</span>
+<div class="silence-grid">
+  <div class="silence-card"><h4>Kickoff Protocol</h4><p>NGFFL has full kickoff procedures including alignment requirements. NYGFL provides no kickoff procedure — each half begins with a snap from the 10-yard line after a coin toss.</p><span class="rule-tag">NGFFL § 6.1.1–6.1.4</span></div>
+  <div class="silence-card"><h4>10-Second Runoff</h4><p>NGFFL clock deduction for applicable fouls after the two-minute warning prevents deliberate clock manipulation. No NYGFL equivalent.</p><span class="rule-tag">NGFFL § 10.7</span></div>
+  <div class="silence-card"><h4>Post-Scrimmage Kick Fouls</h4><p>NGFFL defines PSK fouls (by R during a punt that crosses the neutral zone) with specific enforcement spots. NYGFL has no PSK foul category.</p><span class="rule-tag">NGFFL § 2.14.1(h) · § 4.3.5</span></div>
+  <div class="silence-card"><h4>Running Into the Kicker</h4><p>NGFFL separately penalizes displacing a kicker (without endangering them) vs. roughing. NYGFL has no such distinction — any kicker contact is either roughing or nothing.</p><span class="rule-tag">NGFFL § 9.3.5</span></div>
+  <div class="silence-card"><h4>Participant Conduct Committee</h4><p>NGFFL has a standing committee with authority to review flagrant fouls and impose tournament suspensions. NYGFL's Protest Committee reviews protests but has no proactive disciplinary review mechanism.</p><span class="rule-tag">NGFFL § 9.3.9–9.3.10</span></div>
+  <div class="silence-card"><h4>Officials' Jurisdiction &amp; Technology</h4><p>NGFFL specifies officials have jurisdiction from the coin toss and explicitly bans replay/video/phone use in officiating decisions. NYGFL is silent on both.</p><span class="rule-tag">NGFFL § 1.1.2–1.1.3</span></div>
+  <div class="silence-card"><h4>Penalty Enforcement Reference Chart</h4><p>NGFFL § 10.9 provides a complete one-page matrix of all fouls with enforcement spot, automatic first down status, and loss of down. NYGFL's summary (§ 9) omits enforcement spots, missing fouls, and auto-first-down status.</p><span class="rule-tag">NGFFL § 10.9</span></div>
+  <div class="silence-card"><h4>Hate Speech Policy</h4><p>NGFFL explicitly defines hate speech and mandates ejection. NYGFL's general unsportsmanlike provision would cover most instances but lacks an explicit policy — significant for a community-focused league.</p><span class="rule-tag">NGFFL § 9.4.4–9.4.5</span></div>
+</div>
+
+<hr class="divider">
+<p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-light); text-align: center; margin-top: 2rem;">Analysis based on NYGFL Rule Book (Updated 2025), retrieved April 2026 from nygayfootball.org, and NGFFL Rulebook 2024–2025 (August 9, 2024).</p>
+
+<script>
+function toggle(header) { header.nextElementSibling.classList.toggle('open'); }
+function toggleAll(containerId) {
+  const container = document.getElementById(containerId);
+  const bodies = container.querySelectorAll('.finding-body');
+  const anyOpen = Array.from(bodies).some(b => b.classList.contains('open'));
+  bodies.forEach(b => anyOpen ? b.classList.remove('open') : b.classList.add('open'));
+  event.target.textContent = anyOpen ? 'Expand all' : 'Collapse all';
+}
+</script>
+</body>
+</html>
